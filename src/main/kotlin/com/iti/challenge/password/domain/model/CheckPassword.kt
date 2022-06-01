@@ -9,21 +9,21 @@ class CheckPassword {
     lateinit var password: @NotNull(message = "password is null") String
 }
 
-fun CheckPassword.isValidateFieldEmpty(): Boolean = StringUtils.getDigits(password).isNotBlank()
+fun CheckPassword.isValidateFieldEmpty(): Boolean = StringUtils.getDigits(password).isBlank()
 
-fun CheckPassword.isValidateCharactersQuantity() = password.trim().length > 8
+fun CheckPassword.isValidateCharactersQuantity() = password.trim().length < 9
 
-fun CheckPassword.validateCharactersSpecial (): Boolean = Pattern.compile("[^a-z0-9 ]", Pattern.CASE_INSENSITIVE).matcher(password).find()
+fun CheckPassword.validateCharactersSpecial (): Boolean = !Pattern.compile("[^a-z0-9 ]", Pattern.CASE_INSENSITIVE).matcher(password).find()
 
 fun CheckPassword.isValidateCharactersDuplicate(): Boolean = run {
     val splitted = password.split("".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
     for(i in  splitted.indices) {
         for (o in splitted.indices) {
             if (i == o) continue
-            if (splitted[i] == splitted[o]) return false
+            if (splitted[i] == splitted[o]) return true
         }
     }
-    return true
+    return false
 }
 
 fun CheckPassword.isValidateUpperCase(): Boolean = run {
@@ -33,7 +33,7 @@ fun CheckPassword.isValidateUpperCase(): Boolean = run {
             a
         )
     }.findFirst()
-    return findFirst.isPresent
+    return !findFirst.isPresent
 }
 
 fun CheckPassword.isValidateLowerCase(): Boolean = run {
@@ -43,6 +43,6 @@ fun CheckPassword.isValidateLowerCase(): Boolean = run {
             a
         )
     }.findFirst()
-    return findFirst.isPresent
+    return !findFirst.isPresent
 }
 
